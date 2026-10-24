@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buying Center und Buying Persona</title>
+<style>
+:root{
+  --brand:#5A666D; --brand-dark:#3E474D; --accent:#A3123A; --accent-soft:#F6E7EB;
+  --bg:#F4F5F6; --card:#FFFFFF; --text:#22272B; --muted:#5F6B72; --line:#DDE1E4;
+  --ok:#2E7D4F; --ok-soft:#E6F2EA; --bad:#B3261E; --bad-soft:#FBE9E7;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+header.top{position:sticky;top:0;z-index:10;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px}
+header.top .t1{font-weight:700;letter-spacing:.02em}
+header.top .t2{font-size:14px;opacity:.85}
+header.top button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:4px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
+header.top button:hover{background:rgba(255,255,255,.12)}
+.progresswrap{background:var(--brand-dark);height:6px}
+.progressbar{background:var(--accent);height:6px;width:0;transition:width .3s}
+.layout{display:flex;max-width:1180px;margin:0 auto;padding:24px 20px;gap:28px}
+nav.side{flex:0 0 270px;position:sticky;top:76px;align-self:flex-start}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side li{margin:0 0 4px}
+nav.side button{width:100%;text-align:left;background:transparent;border:0;border-left:3px solid transparent;padding:7px 10px;font:inherit;font-size:15px;color:var(--muted);cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+nav.side button:hover{color:var(--text);background:#ECEEF0}
+nav.side button.active{border-left-color:var(--accent);color:var(--text);font-weight:700;background:#fff}
+nav.side .cnt{font-size:13px;color:var(--muted);font-weight:400;white-space:nowrap}
+nav.side .grp{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 4px 13px}
+main{flex:1;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:28px 32px;margin-bottom:20px}
+.kicker{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:700;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;color:var(--brand-dark)}
+h2{font-size:20px;margin:26px 0 8px;color:var(--brand-dark)}
+h2:first-child{margin-top:0}
+p{margin:0 0 12px}
+ul.txt{margin:0 0 12px;padding-left:22px}
+ul.txt li{margin-bottom:5px}
+.lead{font-size:18px;color:var(--muted)}
+details{border:1px solid var(--line);border-radius:5px;margin:0 0 8px;background:#FAFBFB}
+details summary{cursor:pointer;padding:9px 14px;font-weight:700;color:var(--brand-dark)}
+details[open] summary{border-bottom:1px solid var(--line)}
+details .dd{padding:10px 14px}
+.q{border-top:1px solid var(--line);padding:22px 0 6px}
+.q:first-of-type{border-top:0;padding-top:4px}
+.qn{font-size:13px;color:var(--muted);margin-bottom:4px}
+.qt{font-weight:700;margin-bottom:10px}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:5px;padding:10px 14px;margin:0 0 8px;font:inherit;cursor:pointer;color:var(--text)}
+.opt:hover:not([disabled]){border-color:var(--brand)}
+.opt[disabled]{cursor:default}
+.opt.correct{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.opt .l{display:inline-block;width:24px;font-weight:700;color:var(--muted)}
+.fb{border-left:4px solid var(--ok);background:var(--ok-soft);padding:10px 14px;border-radius:0 5px 5px 0;margin:4px 0 8px}
+.fb.no{border-left-color:var(--bad);background:var(--bad-soft)}
+.fb b{display:block;margin-bottom:2px}
+.navrow{display:flex;justify-content:space-between;gap:12px;margin-top:6px}
+.btn{background:var(--brand);color:#fff;border:0;border-radius:5px;padding:10px 18px;font:inherit;cursor:pointer}
+.btn:hover{background:var(--brand-dark)}
+.btn.ghost{background:transparent;color:var(--brand-dark);border:1px solid var(--line)}
+.btn.ghost:hover{background:#ECEEF0}
+.btn.acc{background:var(--accent)}
+.score{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 18px}
+.score .box{flex:1 1 150px;border:1px solid var(--line);border-radius:5px;padding:12px 14px;background:#FAFBFB}
+.score .big{font-size:26px;font-weight:700;color:var(--brand-dark)}
+.score .sm{font-size:14px;color:var(--muted)}
+.modlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin:8px 0 16px}
+.modlist div{border:1px solid var(--line);border-radius:5px;padding:10px 12px;background:#FAFBFB;font-size:15px}
+.modlist b{display:block;color:var(--brand-dark)}
+.note{background:var(--accent-soft);border-radius:5px;padding:12px 14px;font-size:15px}
+footer.bottom{border-top:1px solid var(--line);color:var(--muted);font-size:14px;padding:16px 20px;text-align:center;background:#fff}
+@media (max-width:860px){
+  .layout{flex-direction:column;padding:16px;gap:14px}
+  nav.side{position:static;flex:none;width:100%}
+  nav.side ol{display:flex;overflow-x:auto;gap:4px;padding-bottom:4px}
+  nav.side li{margin:0;flex:0 0 auto}
+  nav.side .grp{display:none}
+  nav.side button{border-left:0;border-bottom:3px solid transparent;white-space:nowrap}
+  nav.side button.active{border-bottom-color:var(--accent)}
+  .card{padding:20px 16px}
+  h1{font-size:24px}
+  header.top{padding:10px 16px}
+  header.top .t2{display:none}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><div class="t1">Sales Training 1 · Buying Center und Buying Persona</div><div class="t2" id="hdrstat"></div></div>
+  <button type="button" id="resetBtn">Zurücksetzen</button>
+</header>
+<div class="progresswrap"><div class="progressbar" id="pbar"></div></div>
+<div class="layout">
+  <nav class="side" id="nav"></nav>
+  <main id="main"></main>
+</div>
+<footer class="bottom">FH CAMPUS 02 · Selbstlerntool</footer>
+
+<script>
+var DATA = {
+modules: [
+{
+id: "m1", nr: 1, title: "Organisationales Kaufverhalten als Ausgangspunkt",
+lead: "Unternehmen kaufen anders als Privatpersonen. Dieses Modul legt die Grundlage für alle weiteren Themen des Themenblocks.",
+blocks: [
+{h: "Kauf als kollektiver Entscheidungsprozess", p: ["Im B2B-Vertrieb steht auf der Kundenseite eine Organisation. An einer Kaufentscheidung wirken mehrere Personen mit unterschiedlichen Aufgaben, Zielen und Interessen mit. Webster und Wind (1972) beschreiben den organisationalen Kauf daher als kollektiven Entscheidungsprozess. Die Gesamtheit dieser Personen wird als Buying Center bezeichnet (Homburg, 2020).", "Eine einzelne Zusage reicht deshalb selten für einen Abschluss. Wegen der hohen Transaktionswerte und der großen Streuverluste klassischer Werbung ist der persönliche Verkauf im B2B meist das wichtigste Marketinginstrument (Dach, 2023)."]},
+{h: "Das Modell von Webster und Wind", p: ["Die Einflüsse auf eine organisationale Kaufentscheidung lassen sich vier aufeinander aufbauenden Ebenen zuordnen. Eine technisch gute Lösung muss auf allen vier Ebenen bestehen."], list: ["Umweltbezogen: Konjunktur, Recht, Technologie und Wettbewerb.", "Organisational: Ziele, Strukturen, Prozesse und Beschaffungsrichtlinien des Kunden.", "Interpersonell: Zusammenspiel, Rollen und gegenseitiger Einfluss der Beteiligten.", "Individuell: Ausbildung, Erfahrung, Ziele und Risikoempfinden der einzelnen Person."]},
+{h: "Besonderheiten gegenüber dem Konsumentenkauf", list: ["Multipersonalität: mehrere Personen aus verschiedenen Bereichen entscheiden mit.", "Abgeleiteter Bedarf: die Nachfrage entsteht aus der Nachfrage auf den Absatzmärkten des Kunden.", "Formalisierung und Mehrstufigkeit: Lastenhefte, Freigaben und Ausschreibungen, oft über Monate.", "Hoher Wert und hohes Risiko: Referenzen, Tests und Garantien gewinnen an Gewicht.", "Interaktion: Anbieter und Nachfrager beeinflussen sich wechselseitig.", "Wenige, umsatzstarke Nachfrager: daraus folgt die Logik des Key Account Managements."]},
+{h: "Kaufklassen und Kaufmotive", p: ["Robinson, Faris und Wind (1967) unterscheiden Erstkauf, modifizierten Wiederkauf und reinen Wiederkauf. Die Kaufklasse bestimmt den Beratungsaufwand und die Chance, einen etablierten Lieferanten zu verdrängen.", "Neben aufgabenbezogenen Motiven wie Preis, Qualität und Liefersicherheit wirken nicht-aufgabenbezogene Motive der handelnden Person, etwa die Absicherung gegen eine Fehlentscheidung oder Anerkennung im Unternehmen (Webster & Wind, 1972). Auch im B2B entscheiden Menschen."]},
+{h: "Vom Phasenmodell zur Buying Journey", p: ["Die neuere Forschung beschreibt sechs Kaufaufgaben: Problemidentifikation, Lösungssuche, Anforderungsdefinition, Anbieterauswahl, Validierung und Konsensbildung. Käufer springen zwischen diesen Aufgaben hin und her (Steward et al., 2019; Gartner, o. J.).", "Eine Einkaufsgruppe für komplexe Lösungen umfasst sechs bis zehn Personen. Die Zahl der Interaktionen im Kaufprozess stieg von 17 (2019) auf 27 (2021), die frühen Kaufaufgaben laufen weitgehend ohne den Vertrieb (Selent, 2023). Die Vertriebsaufgabe verschiebt sich damit zum Sortieren und Einordnen von Information, dem Sense-Making (Toman et al., 2017)."]}
+],
+terms: [
+["Abgeleiteter Bedarf", "Ein Zulieferer beschafft Komponenten, weil seine eigenen Kunden Produkte bestellen. Die Auftragslage des Kunden bestimmt damit die eigene Verkaufschance mit."],
+["Aufgabenbezogene und nicht-aufgabenbezogene Motive", "Aufgabenbezogen sind Preis, Qualität oder technische Eignung. Nicht-aufgabenbezogen sind persönliche Beweggründe, etwa der Wunsch, sich gegenüber der Geschäftsführung abzusichern."],
+["Sense-Making", "Käufer sind von widersprüchlicher Information oft überfordert. Der Vertrieb hilft, diese Information zu ordnen und einzuschätzen, statt weitere Unterlagen nachzuschieben."],
+["Selling Center", "Das anbieterseitige Gegenstück zum Buying Center: mehrere Personen auf der Verkäuferseite tragen ein komplexes Geschäft gemeinsam."]
+],
+questions: [
+{q: "Wie beschreiben Webster und Wind (1972) den organisationalen Kauf?", a: ["Als kollektiven Entscheidungsprozess, an dem mehrere Personen mit teils unterschiedlichen Zielen beteiligt sind", "Als Entscheidung der Einkaufsabteilung, die vor allem dem Preis folgt", "Als Reiz-Reaktions-Prozess, der durch Werbung ausgelöst wird", "Als Routineentscheidung, bei der persönliche Motive keine Rolle spielen"], why: "Webster und Wind betonen die Beteiligung mehrerer Personen mit unterschiedlichen Zielen. Daraus folgt, dass eine einzelne Zusage selten genügt."},
+{q: "Welche Ebene gehört nicht zu den vier Einflussebenen im Modell von Webster und Wind?", a: ["Produktbezogene Einflüsse", "Umweltbezogene Einflüsse", "Interpersonelle Einflüsse", "Individuelle Einflüsse"], why: "Das Modell umfasst umweltbezogene, organisationale, interpersonelle und individuelle Einflüsse. Eine eigene produktbezogene Ebene kennt es nicht."},
+{q: "Der Werksleiter befürwortet eine Lösung, die IT-Leiterin hat Bedenken, und beide versuchen, den jeweils anderen zu überzeugen. Welcher Einflussebene ist das zuzuordnen?", a: ["Interpersonellen Einflüssen", "Umweltbezogenen Einflüssen", "Organisationalen Einflüssen", "Individuellen Einflüssen"], why: "Die interpersonelle Ebene beschreibt das Zusammenspiel der Personen im Buying Center, ihre Rollen und ihren Einfluss aufeinander."},
+{q: "Was bedeutet abgeleiteter Bedarf im B2B?", a: ["Die Nachfrage eines Unternehmens entsteht aus der Nachfrage auf seinen eigenen Absatzmärkten", "Der Bedarf wird aus dem Budget des Vorjahres abgeleitet", "Der Einkauf leitet den Bedarf aus Angeboten der Lieferanten ab", "Der Bedarf entsteht ausschließlich durch gesetzliche Vorgaben"], why: "Ein Zulieferer beschafft, weil seine Kunden bestellen. Die Marktlage des Kunden bestimmt die eigene Verkaufschance daher mit (Backhaus & Voeth, 2014)."},
+{q: "Ein Betrieb bestellt jeden Monat Schmierstoffe beim bisherigen Lieferanten, ohne Alternativen zu prüfen. Welche Kaufklasse liegt vor?", a: ["Reiner Wiederkauf", "Erstkauf", "Modifizierter Wiederkauf", "Systemkauf"], why: "Routinebeschaffung beim bestehenden Lieferanten mit geringem Aufwand kennzeichnet den reinen Wiederkauf. Für neue Anbieter ist diese Situation schwer zu durchbrechen."},
+{q: "Welches der folgenden Motive ist ein nicht-aufgabenbezogenes Motiv?", a: ["Die Absicherung gegen eine persönliche Fehlentscheidung", "Ein günstiger Preis", "Hohe Liefersicherheit", "Die technische Eignung des Produkts"], why: "Nicht-aufgabenbezogene Motive betreffen die handelnde Person selbst, etwa Absicherung, Anerkennung oder Karriereüberlegungen. Preis, Liefersicherheit und Eignung betreffen das Beschaffungsproblem."},
+{q: "Warum ist der persönliche Verkauf im B2B meist das wichtigste Marketinginstrument?", a: ["Wegen der hohen Transaktionswerte und der großen Streuverluste klassischer Werbung", "Weil B2B-Kunden digitale Kanäle grundsätzlich ablehnen", "Weil Werbung im B2B rechtlich eingeschränkt ist", "Weil Verkaufsgespräche günstiger sind als jede andere Form der Ansprache"], why: "Dach (2023) begründet die Bedeutung des persönlichen Verkaufs mit hohen Transaktionswerten und den Streuverlusten klassischer Werbung bei der Ansprache von Organisationen."},
+{q: "Welche der folgenden Tätigkeiten zählt nicht zu den sechs Kaufaufgaben (buying jobs)?", a: ["Preisverhandlung", "Problemidentifikation", "Validierung", "Konsensbildung"], why: "Die sechs Kaufaufgaben sind Problemidentifikation, Lösungssuche, Anforderungsdefinition, Anbieterauswahl, Validierung und Konsensbildung."},
+{q: "Wohin verschiebt sich nach Toman et al. (2017) die Aufgabe des Vertriebs?", a: ["Zum Sortieren und Einordnen widersprüchlicher Information für den Käufer (Sense-Making)", "Zur Bereitstellung möglichst vieler zusätzlicher Inhalte", "Zur reinen Preisverhandlung am Ende des Prozesses", "Zur Betreuung ausschließlich des formalen Entscheiders"], why: "Käufer sind von widersprüchlicher Information oft überfordert. Der Vertrieb hilft beim Einordnen und führt sicher durch die Kaufaufgaben."},
+{q: "Wie viele Personen umfasst laut Selent (2023) eine typische Einkaufsgruppe für eine komplexe Lösung?", a: ["Sechs bis zehn Personen", "Eine bis zwei Personen", "Drei bis vier Personen", "Fünfzehn bis zwanzig Personen"], why: "Eine typische Einkaufsgruppe umfasst sechs bis zehn Personen, die unabhängig Informationen sammeln und untereinander abgleichen."}
+]
+},
+{
+id: "m2", nr: 2, title: "Das Buying-Center-Konzept",
+lead: "Welche Rollen nehmen die Beteiligten ein, wer treibt den Kauf intern voran, und wie richtet der Vertrieb sein eigenes Team darauf aus?",
+blocks: [
+{h: "Begriff und Abgrenzung", p: ["Das Buying Center umfasst alle Personen, die an einer Kaufentscheidung beteiligt sind (Homburg, 2020). Es ist ein Rollenkonzept und keine Abteilung im Organigramm (Webster & Wind, 1972). Eine Person kann mehrere Rollen einnehmen, eine Rolle kann auf mehrere Personen verteilt sein, und die Rollen sind an keine Hierarchieebene gebunden.", "Die Größe des Buying Centers wächst mit Wert und Komplexität der Beschaffung."]},
+{h: "Die Rollen nach Webster und Wind", list: ["Benutzer (User): nutzt das Produkt im Alltag und beurteilt die Praxistauglichkeit.", "Einflussnehmer (Influencer): liefert Fachwissen und Kriterien, bewertet Alternativen.", "Einkäufer (Buyer): wickelt die Beschaffung formal ab und verhandelt Konditionen.", "Entscheider (Decider): trifft die finale Entscheidung, trägt meist Budgetverantwortung.", "Informationsselektierer (Gatekeeper): steuert Informations- und Zugangsfluss.", "Initiator (häufig ergänzt): stößt den Kaufprozess an."], p2: ["Nicht in jeder Kaufsituation sind alle Rollen besetzt. In einem kleinen Unternehmen ist der Geschäftsführer oft Initiator und Entscheider zugleich (Dach, 2023)."]},
+{h: "Das Promotorenmodell", p: ["Das Rollenmodell zeigt, wer beteiligt ist. Wer den Kauf aktiv vorantreibt, erklärt das Promotorenmodell von Witte (1973). Der Machtpromotor wirkt über seine hierarchische Stellung und überwindet die Willensbarriere. Der Fachpromotor wirkt über Fach- und Methodenwissen und überwindet die Fähigkeitsbarriere. Die Kombination beider gilt als besonders wirksam.", "Später kamen der Prozesspromotor, der dank seiner Organisationskenntnis die Beteiligten verbindet, und der Beziehungspromotor hinzu, der über Unternehmensgrenzen hinweg Netzwerke knüpft (Walter, 1998)."]},
+{h: "Das Selling Center", p: ["Dem Buying Center steht auf der Anbieterseite das Selling Center gegenüber. Die Zusammensetzung des eigenen Teams wird an das Buying Center angepasst, etwa indem ein technischer Verkäufer den Fachentscheider betreut und die Vertriebsleitung die Geschäftsführung. Dieses Vorgehen heißt Team Selling, die Abstimmung beider Seiten Center Matching (Kleinaltenkamp & Saab, 2021)."]}
+],
+terms: [
+["Willensbarriere", "Das Nicht-Wollen im Unternehmen, etwa Widerstand gegen Veränderung. Sie wird vom Machtpromotor überwunden."],
+["Fähigkeitsbarriere", "Das Nicht-Wissen, etwa fehlendes Verständnis für eine neue Technologie. Sie wird vom Fachpromotor überwunden."],
+["Gatekeeper", "Steuert, welche Informationen und Anbieter zu den übrigen Beteiligten gelangen. Beispiel: eine Assistenz der Geschäftsführung, die Anfragen vorsortiert, oder ein IT-Leiter, der Anbieter früh aussortiert."],
+["Center Matching", "Das eigene Verkaufsteam wird so besetzt, dass jeder wichtigen Rolle beim Kunden ein passender Ansprechpartner gegenübersteht."]
+],
+questions: [
+{q: "Was ist das Buying Center?", a: ["Ein Rollenkonzept, das alle an einer Kaufentscheidung beteiligten Personen umfasst", "Die Einkaufsabteilung eines Unternehmens", "Ein Gremium, das in der Satzung des Unternehmens festgelegt ist", "Die Gruppe der Mitarbeitenden, die ein Produkt später nutzen"], why: "Das Buying Center ist ein Rollenkonzept und keine Abteilung im Organigramm (Webster & Wind, 1972)."},
+{q: "Welche Aussage über die Rollen im Buying Center trifft zu?", a: ["Eine Person kann mehrere Rollen zugleich einnehmen", "Jede Rolle wird von genau einer Person besetzt", "Die Rollen sind an bestimmte Hierarchieebenen gebunden", "In jeder Kaufsituation sind alle Rollen besetzt"], why: "Rollen können gebündelt oder geteilt werden, sind an keine Hierarchie gebunden, und nicht jede Rolle ist in jeder Situation besetzt."},
+{q: "Die Assistenz der Geschäftsführung entscheidet, welche Anbieterunterlagen überhaupt weitergeleitet werden. Welche Rolle nimmt sie ein?", a: ["Informationsselektierer (Gatekeeper)", "Einkäufer (Buyer)", "Entscheider (Decider)", "Benutzer (User)"], why: "Der Gatekeeper steuert den Informations- und Zugangsfluss zu anderen Beteiligten. Für den Vertrieb gilt es, diesen Zugang zu sichern."},
+{q: "Welche Aufgabe kennzeichnet den Einflussnehmer (Influencer)?", a: ["Er liefert Fachwissen und Kriterien und bewertet Alternativen", "Er verhandelt Konditionen und wickelt die Bestellung ab", "Er trifft die finale Kaufentscheidung", "Er nutzt das Produkt im Arbeitsalltag"], why: "Einflussnehmer prägen die Bewertung über Fachwissen. Der Vertrieb versorgt sie mit fachlichen Argumenten und Nachweisen."},
+{q: "Mit welchen Argumenten spricht der Vertrieb den Entscheider (Decider) vorrangig an?", a: ["Mit wirtschaftlichem Nutzen und Risiko", "Mit Details zur Bedienoberfläche", "Mit Liefer- und Zahlungsmodalitäten", "Mit der Zahl verfügbarer Produktvarianten"], why: "Der Entscheider trägt meist die Budgetverantwortung. Ihn überzeugen der wirtschaftliche Nutzen und ein beherrschbares Risiko."},
+{q: "Welche Barriere überwindet der Machtpromotor nach Witte (1973)?", a: ["Die Willensbarriere", "Die Fähigkeitsbarriere", "Die Informationsbarriere", "Die Budgetbarriere"], why: "Der Machtpromotor überwindet über seine hierarchische Stellung das Nicht-Wollen im Unternehmen. Der Fachpromotor überwindet das Nicht-Wissen."},
+{q: "Eine Sachbearbeiterin ohne Führungsfunktion treibt die Einführung einer Software voran, weil sie die Methode am besten versteht. Welcher Promotortyp liegt vor?", a: ["Fachpromotor", "Machtpromotor", "Beziehungspromotor", "Prozesspromotor"], why: "Der Fachpromotor wirkt über Fach- und Methodenwissen. Seine hierarchische Position ist dabei zweitrangig."},
+{q: "Wodurch zeichnet sich der Beziehungspromotor aus (Walter, 1998)?", a: ["Er knüpft Netzwerke über Unternehmensgrenzen hinweg", "Er stellt aufgrund seiner Position Ressourcen bereit", "Er kennt die Technologie am besten", "Er verhandelt den Preis mit dem Anbieter"], why: "Der Beziehungspromotor verbindet Personen über Unternehmensgrenzen hinweg. Der Prozesspromotor verbindet dagegen die Beteiligten innerhalb der Organisation."},
+{q: "Was versteht man unter Center Matching?", a: ["Die Abstimmung der Zusammensetzung des eigenen Selling Centers auf das Buying Center des Kunden", "Den Abgleich der Angebote mehrerer Anbieter durch den Einkauf", "Die Zuordnung von Kaufphasen zu Kaufklassen", "Die Auswahl des günstigsten Anbieters durch den Entscheider"], why: "Beim Center Matching erhält jede wichtige Rolle beim Kunden ein passendes Gegenüber im eigenen Team, etwa ein technischer Verkäufer für den Fachentscheider (Kleinaltenkamp & Saab, 2021)."},
+{q: "Warum ergänzt das Promotorenmodell das Rollenmodell von Webster und Wind?", a: ["Das Rollenmodell zeigt, wer beteiligt ist, lässt aber offen, wer den Kauf aktiv vorantreibt", "Das Rollenmodell gilt nur für Konsumgüter", "Das Promotorenmodell ersetzt die Rolle des Entscheiders", "Das Promotorenmodell beschreibt die Kaufphasen genauer"], why: "Promotoren fördern einen Beschaffungsprozess über ihre normale Aufgabe hinaus. Diesen informellen Antrieb erfasst das formale Rollenmodell nicht."}
+]
+},
+{
+id: "m3", nr: 3, title: "Kaufklassen und Kaufphasen",
+lead: "Das Buygrid-Modell verbindet Kaufklassen und Kaufphasen zu einem Werkzeug, mit dem sich der Vertriebsaufwand gezielt planen lässt.",
+blocks: [
+{h: "Das Buygrid-Modell", p: ["Robinson, Faris und Wind (1967) verstehen den organisationalen Einkauf als Entscheidungsprozess. Ihre zentrale Erkenntnis lautet, dass das Kaufverhalten stärker von der Kaufsituation als von der Produktart abhängt. Sie verbinden drei Kaufklassen mit acht Kaufphasen zu einer Matrix, dem Buygrid. Jede Zelle zeigt, wer beteiligt ist, welche Information benötigt wird und wie der Anbieter sie liefern kann."]},
+{h: "Die acht Kaufphasen", list: ["1 Bedarf erkennen", "2 Art und Menge bestimmen", "3 Spezifikation beschreiben (häufig als Lastenheft)", "4 Lieferanten suchen und prüfen", "5 Angebote einholen und analysieren", "6 Angebote bewerten und Lieferant wählen", "7 Bestellabwicklung festlegen", "8 Leistung bewerten"], p2: ["Die Phasen sind ein analytisches Hilfsmittel. In der Praxis fallen Phasen zusammen, werden übersprungen oder mehrfach durchlaufen."]},
+{h: "Kaufklassen und kritische Phasen", p: ["Beim Erstkauf werden alle Phasen intensiv durchlaufen, entscheidend sind die frühen Phasen, in denen Lösungsweg und Anforderungen festgelegt werden. Beim modifizierten Wiederkauf liegt das Gewicht auf Lieferantensuche und Angebotsbewertung. Beim reinen Wiederkauf entfallen die mittleren Phasen, es zählt fast nur die Leistungsbewertung (Backhaus & Voeth, 2014)."]},
+{h: "Festlegungsfortschritt", p: ["Mit jeder abgeschlossenen Phase verengt sich der Kreis der infrage kommenden Anbieter (creeping commitment). Der etablierte Anbieter profitiert im reinen Wiederkauf von seiner Position. Ein neuer Anbieter hat seine größte Chance im Erstkauf oder im modifizierten Wiederkauf. Er steigt möglichst früh ein oder weckt begründete Zweifel an der Routine und verwandelt so einen reinen in einen modifizierten Wiederkauf (Kleinaltenkamp & Saab, 2021)."]},
+{h: "Phasen, Rollen und Grenzen des Modells", p: ["In den frühen Phasen sind Initiator, Anwender und Fachpromotor aktiv, in der Spezifikation die Einflussnehmer aus Technik und IT. In der Lieferantensuche treten Einkäufer und Gatekeeper hervor, in der Auswahlphase Entscheider und Machtpromotor.", "Das Buygrid unterstellt einen rationalen, geordneten Ablauf und erfasst persönliche Motive und Macht nur unzureichend. Es ist beschreibend und sagt den Ausgang einer Entscheidung nicht voraus. Als Landkarte bleibt es wertvoll, die reale Journey verläuft flexibler (Steward et al., 2019)."]}
+],
+terms: [
+["Creeping commitment", "Schrittweiser Festlegungsfortschritt: Je weiter der Prozess voranschreitet, desto geringer die Chance eines neuen Anbieters. Wer erst einsteigt, wenn das Lastenheft auf einen Wettbewerber zugeschnitten ist, kommt meist zu spät."],
+["Lastenheft", "Schriftliche Beschreibung der Anforderungen des Kunden. Wer die Spezifikation mitprägt, verschafft sich einen Vorteil."],
+["Hinweise auf die Kaufklasse", "Erstkauf: neues Projektteam, offenes Lastenheft, hoher Informationsbedarf. Modifizierter Wiederkauf: bestehender Lieferant, geänderte Anforderungen, Ausschreibung. Reiner Wiederkauf: feste Bestellroutinen, wenig Gesprächsinteresse."]
+],
+questions: [
+{q: "Welche zentrale Erkenntnis formulieren Robinson, Faris und Wind (1967)?", a: ["Das Kaufverhalten hängt stärker von der Kaufsituation als von der Produktart ab", "Das Kaufverhalten hängt vor allem vom Preis ab", "Investitionsgüter werden immer im Erstkauf beschafft", "Alle Kaufphasen werden bei jedem Kauf gleich intensiv durchlaufen"], why: "Die Kaufsituation, also die Kaufklasse, prägt den Ablauf stärker als die Art des Produkts."},
+{q: "Was verbindet das Buygrid-Modell?", a: ["Drei Kaufklassen mit acht Kaufphasen", "Fünf Buying-Center-Rollen mit vier Promotortypen", "Sechs Kaufaufgaben mit drei Kaufklassen", "Vier Einflussebenen mit acht Kaufphasen"], why: "Das Buygrid ist eine Matrix aus drei Kaufklassen und acht Kaufphasen."},
+{q: "Welche Phase wird auch beim reinen Wiederkauf intensiv durchlaufen?", a: ["Leistung bewerten", "Spezifikation beschreiben", "Lieferanten suchen und prüfen", "Angebote einholen und analysieren"], why: "Beim reinen Wiederkauf entfallen die mittleren Phasen. Die Leistungsbewertung entscheidet, ob der bestehende Lieferant bleibt."},
+{q: "Was beschreibt der Begriff creeping commitment?", a: ["Mit jeder abgeschlossenen Phase verengt sich der Kreis der infrage kommenden Anbieter", "Der Kunde bindet sich vertraglich schrittweise an mehrere Anbieter", "Die Zahl der Beteiligten im Buying Center wächst mit jeder Phase", "Der Preis sinkt mit jeder weiteren Verhandlungsrunde"], why: "Der Festlegungsfortschritt verringert mit jeder Phase die Chance eines neuen Anbieters, noch berücksichtigt zu werden."},
+{q: "Welche Phasen sind beim Erstkauf besonders kritisch?", a: ["Die frühen Phasen, in denen Lösungsweg und Anforderungen festgelegt werden", "Ausschließlich die Bestellabwicklung", "Ausschließlich die Leistungsbewertung", "Die Phasen nach Vertragsabschluss"], why: "Wer in den frühen Phasen mitgestaltet, prägt das spätere Lastenheft."},
+{q: "Worauf liegt beim modifizierten Wiederkauf das Gewicht?", a: ["Auf der Lieferantensuche und der Angebotsbewertung", "Auf der Bedarfserkennung", "Auf der Bestellabwicklung", "Auf der Bestimmung von Art und Menge"], why: "Der Kunde prüft, ob sich ein Wechsel oder eine Anpassung lohnt. Lieferantensuche und Angebotsbewertung gewinnen dadurch an Bedeutung."},
+{q: "Wie kann ein neuer Anbieter einen reinen Wiederkauf aufbrechen?", a: ["Indem er begründete Zweifel an der Routine weckt und einen konkreten Mehrwert aufzeigt", "Indem er erst in der Angebotsphase einsteigt", "Indem er das bestehende Lastenheft unverändert übernimmt", "Indem er ausschließlich mit dem Einkauf spricht"], why: "Gelingt es, Zweifel an der Routine zu wecken, verschiebt sich die Situation zum modifizierten Wiederkauf, und die mittleren Phasen öffnen sich erneut."},
+{q: "Welche Hinweise sprechen für einen Erstkauf?", a: ["Ein neu gebildetes Projektteam, ein offenes Lastenheft und hoher Informationsbedarf", "Feste Bestellroutinen und geringes Gesprächsinteresse", "Ein bestehender Lieferant und geänderte Anforderungen", "Ein Rahmenvertrag mit automatischer Verlängerung"], why: "Diese Merkmale deuten auf eine neue Aufgabe hin. Feste Routinen sprechen für einen reinen Wiederkauf, geänderte Anforderungen beim bestehenden Lieferanten für einen modifizierten Wiederkauf."},
+{q: "Wer gibt in der Phase Spezifikation beschreiben typischerweise den Ausschlag?", a: ["Einflussnehmer aus Technik und IT in der Rolle des Fachpromotors", "Der Einkäufer als Prozesspromotor", "Der Entscheider als Machtpromotor", "Der Gatekeeper als Beziehungspromotor"], why: "In der Spezifikation prägen Technik und IT das Lastenheft. Wer hier nur mit dem Einkauf spricht, verfehlt den Fachpromotor."},
+{q: "Welche Aussage beschreibt eine Grenze des Buygrid-Modells?", a: ["Es unterstellt einen rationalen, geordneten Ablauf und erfasst persönliche Motive und Macht nur unzureichend", "Es berücksichtigt keine Kaufklassen", "Es gilt ausschließlich für Konsumgüter", "Es sagt den Ausgang einer konkreten Entscheidung zuverlässig voraus"], why: "Das Modell ist beschreibend und nicht vorhersagend. Persönliche Motive und Machtverhältnisse ergänzen das Rollen- und Promotorenmodell aus Modul 2."}
+]
+},
+{
+id: "m4", nr: 4, title: "Von der Zielgruppe zur Buying Persona",
+lead: "Die Buying Persona gibt den Rollen im Buying Center ein Gesicht. Im Mittelpunkt steht die Methodik, mit der eine Persona fundiert entsteht.",
+blocks: [
+{h: "Konkretisierungsstufen", p: ["Der Weg führt von der Zielgruppe über das Marktsegment und das Ideal Customer Profile zur Buying Persona. Mit jeder Stufe steigt die Detailtiefe, der Blick wandert vom Markt über das Unternehmen zum Menschen. Das Ideal Customer Profile beschreibt das ideale Kundenunternehmen, die Persona die typische Ansprechperson mit Zielen und Verhalten (Dach, 2023; Selent, 2023)."]},
+{h: "Herkunft und Datenbasis", p: ["Der Persona-Begriff stammt aus der Softwareentwicklung (Cooper, 1999). Adele Revella (2015) übertrug ihn als Buyer Persona auf den B2B-Kontext.", "Für die Datengewinnung gibt es drei Wege: die Ad-hoc- oder Proto-Persona aus internem Wissen (schnell, beruht auf Annahmen), die interviewbasierte Persona (Standard) und die datenbasierte Persona aus Nutzungs- und Verhaltensdaten (Salminen et al., 2021). Eine Persona ohne Datengrundlage ist reine Fiktion."]},
+{h: "Interviews und die Five Rings of Buying Insight", p: ["Bewährt haben sich sechs bis zehn Interviews von 20 bis 40 Minuten, besonders mit kürzlich gewonnenen Kunden (Dach, 2023). Revella (2015) strukturiert sie entlang von fünf Erkenntnisfeldern:"], list: ["Priority Initiative: Was bringt den Kunden dazu, jetzt zu handeln?", "Success Factors: Welches Ergebnis erwartet er, betrieblich und persönlich?", "Perceived Barriers: Was hält ihn von Lösung oder Anbieter ab?", "Decision Criteria: Welche Eigenschaften vergleicht er, was gibt den Ausschlag?", "Buyer's Journey: Wie läuft die Entscheidung ab, wer wirkt mit?"], p2: ["Nachfragen ist zentral. Hinter der Aussage, der Preis sei entscheidend gewesen, verbirgt sich oft das Motiv, sich gegen eine Fehlentscheidung abzusichern."]},
+{h: "Erstellung, Steckbrief und Pflege", p: ["Die Erstellung folgt sieben Schritten: Ziel und Umfang festlegen, internes Wissen sammeln, Kunden interviewen, Muster erkennen, Steckbrief erstellen, Relevanz absichern, anwenden und aktualisieren. Weniger als zehn Personas haben sich bewährt, eine Überprüfung ist etwa alle zwei bis drei Jahre sinnvoll (Dach, 2023).", "Der Steckbrief legt den Schwerpunkt auf Motive, Pain Points, Entscheidungskriterien, Hürden, Kanalpräferenzen und die Rolle im Buying Center. Demografische Angaben allein sagen wenig über das Kaufverhalten aus (Revella, 2015)."]},
+{h: "Datenbasierte und KI-gestützte Personas", p: ["Datenbasierte Personas bleiben aktueller, weil sie sich mit neuen Daten anpassen lassen. Neuere Ansätze erzeugen Persona-Beschreibungen mit Sprachmodellen (Jung et al., 2025). Das Risiko liegt in der Verzerrung: KI-Modelle übernehmen die Schieflagen ihrer Trainingsdaten (Salminen et al., 2021). Da Kaufentscheidungen von Gruppen getroffen werden, ist die Persona mit der Buying-Center-Perspektive zu verbinden."]}
+],
+terms: [
+["Ideal Customer Profile (ICP)", "Idealtypisches Kundenunternehmen nach Firmenmerkmalen, etwa ein Hersteller mit mehreren Werken und veralteter Fertigungs-IT."],
+["Proto-Persona", "Erster Entwurf aus dem Wissen von Vertrieb, Marketing und Service. Schnell und günstig, beschreibt den Kunden aber nur von außen und muss später überprüft werden."],
+["Buying Insight", "Die eigentliche Motivation oder Barriere, die das Kaufverhalten einer Persona erklärt."],
+["Clustering", "Statistisches Verfahren, das in großen Datenmengen Gruppen ähnlicher Fälle bildet. Es dient der reproduzierbaren Bildung datenbasierter Personas."]
+],
+questions: [
+{q: "In welcher Reihenfolge steigt die Detailtiefe vom Markt zur Person?", a: ["Zielgruppe, Marktsegment, Ideal Customer Profile, Buying Persona", "Buying Persona, Ideal Customer Profile, Marktsegment, Zielgruppe", "Marktsegment, Zielgruppe, Buying Persona, Ideal Customer Profile", "Ideal Customer Profile, Zielgruppe, Buying Persona, Marktsegment"], why: "Mit jeder Stufe wird die Beschreibung konkreter, vom groben Markt über das ideale Kundenunternehmen bis zur einzelnen Ansprechperson."},
+{q: "Was beschreibt das Ideal Customer Profile?", a: ["Das idealtypische Kundenunternehmen nach Firmenmerkmalen", "Die typische Ansprechperson mit ihren Motiven", "Den gesamten Markt nach wenigen Merkmalen", "Den Kunden mit dem höchsten Umsatz im Vorjahr"], why: "Das Ideal Customer Profile beschreibt das Unternehmen, die Buying Persona die handelnde Person in diesem Unternehmen."},
+{q: "Woher stammt der Persona-Begriff ursprünglich?", a: ["Aus der Softwareentwicklung (Alan Cooper)", "Aus der Werbepsychologie der 1950er-Jahre", "Aus der Organisationssoziologie (Max Weber)", "Aus dem Key Account Management"], why: "Cooper (1999) beschrieb fiktive Nutzerfiguren für Entwicklungsteams. Revella (2015) übertrug den Begriff auf Marketing und Vertrieb im B2B."},
+{q: "Was kennzeichnet eine Ad-hoc- oder Proto-Persona?", a: ["Sie entsteht schnell aus internem Wissen, beruht aber auf Annahmen und ist später zu überprüfen", "Sie beruht auf mindestens zehn ausführlichen Kundeninterviews", "Sie wird automatisch aus CRM-Daten erzeugt", "Sie gilt als belastbarster Weg der Datengewinnung"], why: "Die Proto-Persona eignet sich als erster Entwurf. Sie beschreibt den Kunden nur von außen."},
+{q: "Welche Befragten sind für Persona-Interviews besonders aufschlussreich?", a: ["Kürzlich gewonnene Kunden", "Kunden, die seit über zehn Jahren keinen Kauf getätigt haben", "Ausschließlich Mitarbeitende des eigenen Vertriebs", "Zufällig ausgewählte Personen ohne Kaufbezug"], why: "Bei kürzlich gewonnenen Kunden ist die Erinnerung an den Entscheidungsprozess noch frisch (Dach, 2023)."},
+{q: "Welcher der Five Rings fragt, was den Kunden dazu bringt, jetzt zu handeln statt beim Status quo zu bleiben?", a: ["Priority Initiative", "Success Factors", "Decision Criteria", "Buyer's Journey"], why: "Die Priority Initiative erfasst den Auslöser der Kaufentscheidung."},
+{q: "Ein Kunde berichtet, er habe gezögert, weil er eine aufwendige Integration befürchtete. Welchem Erkenntnisfeld ist diese Aussage zuzuordnen?", a: ["Perceived Barriers", "Priority Initiative", "Success Factors", "Decision Criteria"], why: "Perceived Barriers beschreiben, was den Kunden davon abhält, eine Lösung oder einen Anbieter zu wählen."},
+{q: "Worauf liegt der Schwerpunkt eines belastbaren Persona-Steckbriefs?", a: ["Auf Motiven, Pain Points und Entscheidungskriterien", "Auf Alter, Familienstand und Hobbys", "Auf einem möglichst realistischen Foto", "Auf der Zahl der Mitarbeitenden des Kundenunternehmens"], why: "Zwei Personen mit gleichem Alter und Beruf können sich im Kaufverhalten deutlich unterscheiden. Entscheidend sind die kaufrelevanten Merkmale (Revella, 2015)."},
+{q: "Wie viele Personas haben sich in der Praxis bewährt?", a: ["Weniger als zehn", "Eine einzige für alle Rollen", "Mindestens 25", "Eine pro Kunde"], why: "Bei mehr Personas wird der Aufwand für eine differenzierte Ansprache zu groß (Dach, 2023)."},
+{q: "Welches Risiko bringen KI-gestützte Personas besonders mit sich?", a: ["Verzerrungen aus den Trainingsdaten werden in die Personas übernommen", "Sie lassen sich nicht mehr aktualisieren", "Sie benötigen zwingend Interviews mit allen Kunden", "Sie sind auf Konsumgütermärkte beschränkt"], why: "KI-Modelle bilden die Verzerrungen ihrer Trainingsdaten ab. Ergebnisse sind daher kritisch zu prüfen (Salminen et al., 2021)."}
+]
+},
+{
+id: "m5", nr: 5, title: "Brücke in den Vertrieb",
+lead: "Modul 5 führt die Bausteine der Module 1 bis 4 zusammen und verbindet sie mit Buyer Enablement, Qualifizierung und Value Selling.",
+blocks: [
+{h: "Der rote Faden", p: ["Jedes Modul beantwortet eine eigene Frage: wer mitentscheidet und intern antreibt (Modul 2), wie neu die Situation ist und in welcher Phase sie steht (Modul 1 und 3), was die einzelne Ansprechperson bewegt (Modul 4). Wer das Buying Center kennt, die Phase aber nicht, spricht die richtigen Personen zur falschen Zeit an. Wer die Phase kennt, die Motive aber nicht, liefert die falschen Argumente."]},
+{h: "Buyer Enablement", p: ["Da Käufer sich weitgehend selbst informieren, geht es darum, ihnen das Kaufen zu erleichtern (Gartner, o. J.). Buyer Enablement besteht aus präskriptiven Empfehlungen und praktischer Unterstützung wie Rechnern, Checklisten oder Vergleichshilfen (Toman et al., 2017). Für jede der sechs Kaufaufgaben gibt es passende Angebote, etwa Kriterienlisten für die Anforderungsdefinition oder Argumentationshilfen für die Konsensbildung."]},
+{h: "Qualifizierung mit BANT und MEDDIC", p: ["BANT prüft Budget, Entscheidungsbefugnis (Authority), Bedarf (Need) und Zeithorizont (Timeline). MEDDIC, 1996 bei PTC entstanden, umfasst sechs Komponenten, die direkt an die früheren Module anschließen:"], list: ["Metrics: messbarer Nutzen, verbunden mit den Erfolgsfaktoren der Persona.", "Economic Buyer: Person mit Budgethoheit, also Entscheider und Machtpromotor.", "Decision Criteria: Entscheidungskriterien der Persona.", "Decision Process: Ablauf der Entscheidung entlang der Kaufphasen.", "Identify Pain: zugrunde liegendes Problem, also Pain Points und Bedarf.", "Champion: interner Fürsprecher, meist Fach- oder Beziehungspromotor."], p2: ["Die Qualifizierung hängt eng mit dem Festlegungsfortschritt zusammen: Eine zu spät erkannte Chance ist kaum noch zu gewinnen (Backhaus & Voeth, 2014)."]},
+{h: "Vertriebsablauf und Value Selling", p: ["Der Ablauf in der Synthese: Chance erkennen und qualifizieren, Buying Center analysieren, Kaufklasse und Phase bestimmen, Personas klären, Selling Center besetzen, rollen- und phasengerecht ansprechen, Abschluss und After-Sales.", "Value Selling übersetzt Produktmerkmale in einen belegten Nutzen für das Kundenunternehmen. Ein belegter Nutzen erleichtert Champion und Economic Buyer die interne Begründung der Investition (Kleinaltenkamp & Saab, 2021)."]}
+],
+terms: [
+["Champion", "Interner Fürsprecher beim Kunden, der das Vorhaben vorantreibt. Bleibt er ohne Unterstützung, muss er die interne Abstimmung allein tragen."],
+["Economic Buyer", "Die Person mit Budgethoheit. Im Buying Center entspricht sie dem Entscheider und meist dem Machtpromotor."],
+["Account- und Opportunity-Plan", "Arbeitsblatt, das Buying-Center-Analyse, Personas, Phaseneinordnung und MEDDIC-Qualifizierung für eine konkrete Verkaufschance zusammenführt."],
+["Merkmal und Nutzen", "Merkmal: Das System hat eine offene Schnittstelle. Nutzen: Sie binden neue Maschinen ohne Eingriff in das ERP an und vermeiden Stillstände."]
+],
+questions: [
+{q: "Was versteht man unter Buyer Enablement?", a: ["Die Bereitstellung von Information und Hilfsmitteln, die den Kunden bei der Bewältigung seiner Kaufaufgaben unterstützen", "Die Schulung des eigenen Vertriebsteams im Produktwissen", "Die Freischaltung von Rabatten für Bestandskunden", "Die Übertragung der Kaufentscheidung an den Einkauf"], why: "Statt weitere Informationen zu liefern, erleichtert der Vertrieb dem Kunden das Kaufen (Gartner, o. J.)."},
+{q: "Aus welchen zwei Bausteinen besteht Buyer Enablement nach Toman et al. (2017)?", a: ["Präskriptive Empfehlung und praktische Unterstützung", "Preisnachlass und Zahlungsziel", "Produktdemo und Vertragsentwurf", "Kaltakquise und Nachfassen"], why: "Empfehlungen sagen dem Kunden, was er tun oder lassen sollte. Rechner, Checklisten und Vergleichshilfen helfen bei der Umsetzung."},
+{q: "Welches Buyer-Enablement-Angebot passt zur Kaufaufgabe Konsensbildung?", a: ["Argumentationshilfen für die interne Abstimmung im Buying Center", "Diagnose-Checklisten, die das Problem fassbar machen", "Vorlagen für das Lastenheft", "Wirtschaftlichkeitsrechner und Testinstallationen"], why: "Die Konsensbildung gilt als besonders schwierig. Material, das dem Champion die interne Überzeugungsarbeit erleichtert, wirkt hier oft stärker als ein weiteres Verkaufsgespräch."},
+{q: "Wofür stehen die vier Buchstaben von BANT?", a: ["Budget, Authority, Need, Timeline", "Buyer, Agent, Network, Target", "Benefit, Advantage, Need, Trust", "Budget, Analysis, Negotiation, Termination"], why: "BANT ist ein einfaches Raster zur Qualifizierung nach Budget, Entscheidungsbefugnis, Bedarf und Zeithorizont."},
+{q: "Welcher Rolle aus Modul 2 entspricht der Economic Buyer in MEDDIC?", a: ["Dem Entscheider und Machtpromotor", "Dem Gatekeeper", "Dem Benutzer", "Dem Fachpromotor"], why: "Der Economic Buyer verfügt über die Budgethoheit, wie der Entscheider, der meist auch Machtpromotor ist."},
+{q: "Wer ist in MEDDIC der Champion?", a: ["Ein interner Fürsprecher beim Kunden, meist Fach- oder Beziehungspromotor", "Der erfolgreichste Verkäufer im eigenen Team", "Der Anbieter mit dem günstigsten Angebot", "Die externe Beratung des Kunden"], why: "Der Champion treibt das Vorhaben beim Kunden voran. Er ist mit Argumenten und Material zu unterstützen."},
+{q: "Mit welchem Baustein der früheren Module ist die MEDDIC-Komponente Decision Process verbunden?", a: ["Mit den Kaufphasen aus Modul 3", "Mit den vier Einflussebenen aus Modul 1", "Mit dem Ideal Customer Profile aus Modul 4", "Mit dem Selling Center aus Modul 2"], why: "Wer den Ablauf der Entscheidung kennt, weiß, in welcher Kaufphase die Verkaufschance steht."},
+{q: "Warum hängt die Qualifizierung von Verkaufschancen mit dem Festlegungsfortschritt zusammen?", a: ["Eine zu spät erkannte Chance ist kaum noch zu gewinnen", "Weil Qualifizierung erst nach Vertragsabschluss erfolgt", "Weil der Festlegungsfortschritt nur im reinen Wiederkauf gilt", "Weil Qualifizierung den Festlegungsfortschritt beim Kunden aufhebt"], why: "Mit jeder Phase verengt sich der Anbieterkreis. Frühe Qualifizierung lenkt die Ressourcen auf Chancen, die noch beeinflussbar sind."},
+{q: "Welche Aussage ist nutzenorientiert im Sinne des Value Selling?", a: ["Sie binden neue Maschinen ohne Eingriff in das ERP an und vermeiden Stillstände.", "Das System hat eine offene Schnittstelle.", "Wir bieten Support rund um die Uhr.", "Das MES erfasst alle Maschinendaten."], why: "Value Selling übersetzt Merkmale in einen konkreten Nutzen für das Kundenunternehmen. Die übrigen Aussagen beschreiben Merkmale."},
+{q: "Was passiert, wenn der Vertrieb das Buying Center kennt, die aktuelle Kaufphase aber nicht?", a: ["Er spricht die richtigen Personen zur falschen Zeit an", "Er liefert den richtigen Personen die richtigen Argumente", "Er kann die Kaufklasse nicht mehr bestimmen", "Er verliert den Zugang zum Gatekeeper"], why: "Erst das Zusammenspiel von Rollen, Phasen und Motiven trägt. Ohne Phasenwissen stimmt der Zeitpunkt der Ansprache nicht."}
+]
+}
+],
+kern: [
+"Organisationen kaufen kollektiv, formalisiert und über längere Zeiträume. Das Modell von Webster und Wind erklärt diese Entscheidungen über vier Einflussebenen.",
+"Das Buying Center ist ein Rollenkonzept. Das Promotorenmodell ergänzt es um die Frage, wer den Kauf intern vorantreibt.",
+"Das Buygrid verbindet Kaufklassen und Kaufphasen. Mit jeder Phase verengt sich der Anbieterkreis, ein früher Einstieg ist daher entscheidend.",
+"Buying Personas beruhen auf Daten, vor allem auf Interviews entlang der Five Rings, und legen den Schwerpunkt auf Motive.",
+"Buyer Enablement, BANT, MEDDIC und Value Selling überführen die Analyse in konkrete Vertriebsarbeit."
+]
+};
+
+/* ---------- Logik ---------- */
+var STORE_KEY = "st1-bc-bp-lerntool-v1";
+var LETTERS = ["A", "B", "C", "D"];
+
+function seededOrder(n, seed) {
+  var idx = [], i, s = seed;
+  for (i = 0; i < n; i++) idx.push(i);
+  for (i = n - 1; i > 0; i--) {
+    s = (s * 9301 + 49297) % 233280;
+    var j = Math.floor((s / 233280) * (i + 1));
+    var t = idx[i]; idx[i] = idx[j]; idx[j] = t;
+  }
+  return idx;
+}
+
+var QUESTIONS = [];
+DATA.modules.forEach(function (m, mi) {
+  m.questions.forEach(function (q, qi) {
+    q.id = m.id + "q" + (qi + 1);
+    q.mod = m.id;
+    q.order = seededOrder(q.a.length, (mi + 1) * 131 + (qi + 1) * 17);
+    q.c = 0;
+    QUESTIONS.push(q);
+  });
+});
+
+var PAGES = [{key: "start", label: "Einstieg"}];
+DATA.modules.forEach(function (m) {
+  PAGES.push({key: m.id + "s", label: "Modul " + m.nr + " · Stoff", mod: m, type: "stoff"});
+  PAGES.push({key: m.id + "q", label: "Modul " + m.nr + " · Fragen", mod: m, type: "fragen"});
+});
+PAGES.push({key: "end", label: "Abschluss"});
+
+var state = {page: 0, answers: {}};
+
+function load() {
+  try {
+    var raw = window.localStorage.getItem(STORE_KEY);
+    if (raw) {
+      var s = JSON.parse(raw);
+      if (s && typeof s.page === "number" && s.answers) state = s;
+      if (state.page < 0 || state.page >= PAGES.length) state.page = 0;
+    }
+  } catch (e) {}
+}
+function save() {
+  try { window.localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function esc(t) {
+  return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function modStats(m) {
+  var answered = 0, right = 0;
+  m.questions.forEach(function (q) {
+    if (q.id in state.answers) { answered++; if (state.answers[q.id] === q.c) right++; }
+  });
+  return {answered: answered, right: right, total: m.questions.length};
+}
+function totalStats() {
+  var a = 0, r = 0;
+  QUESTIONS.forEach(function (q) {
+    if (q.id in state.answers) { a++; if (state.answers[q.id] === q.c) r++; }
+  });
+  return {answered: a, right: r, total: QUESTIONS.length};
+}
+
+function renderNav() {
+  var h = "<ol>";
+  PAGES.forEach(function (p, i) {
+    if (p.type === "stoff") h += "<li class='grp'>Modul " + p.mod.nr + "</li>";
+    var cnt = "";
+    if (p.type === "fragen") { var st = modStats(p.mod); cnt = "<span class='cnt'>" + st.answered + "/" + st.total + "</span>"; }
+    var lab = p.type === "stoff" ? "Kernstoff" : p.type === "fragen" ? "Kontrollfragen" : p.label;
+    h += "<li><button type='button' data-go='" + i + "' class='" + (i === state.page ? "active" : "") + "' title='" + esc(p.label) + "'><span>" + esc(window.innerWidth <= 860 && p.mod ? p.label : lab) + "</span>" + cnt + "</button></li>";
+  });
+  return h + "</ol>";
+}
+
+function navRow() {
+  var prev = state.page > 0 ? "<button type='button' class='btn ghost' data-go='" + (state.page - 1) + "'>Zurück</button>" : "<span></span>";
+  var next = state.page < PAGES.length - 1 ? "<button type='button' class='btn' data-go='" + (state.page + 1) + "'>Weiter</button>" : "<span></span>";
+  return "<div class='navrow'>" + prev + next + "</div>";
+}
+
+function renderStart() {
+  var h = "<div class='card'><p class='kicker'>Selbstlerntool</p><h1>Buying Center und Buying Persona</h1>";
+  h += "<p class='lead'>Dieses Lerntool begleitet Sie durch die fünf Module des Themenblocks. Jedes Modul besteht aus einer kompakten Zusammenfassung des Kernstoffs und zehn Kontrollfragen mit Begründung.</p>";
+  h += "<div class='modlist'>";
+  DATA.modules.forEach(function (m) { h += "<div><b>Modul " + m.nr + "</b>" + esc(m.title) + "</div>"; });
+  h += "</div>";
+  h += "<h2>So arbeiten Sie mit dem Tool</h2><ul class='txt'><li>Lesen Sie zuerst den Kernstoff eines Moduls. Begriffe lassen sich dort aufklappen.</li><li>Beantworten Sie danach die Kontrollfragen. Nach jeder Antwort erscheinen die Auflösung und eine kurze Begründung.</li><li>Ihr Fortschritt wird in diesem Browser auf diesem Gerät gespeichert. Mit „Zurücksetzen“ oben rechts beginnen Sie jederzeit von vorne.</li></ul>";
+  h += "<p class='note'>Das Tool ersetzt die Modulunterlagen nicht. Es dient der Wiederholung und der Selbstüberprüfung vor der Prüfung.</p>";
+  return h + navRow() + "</div>";
+}
+
+function paras(arr) { var h = ""; (arr || []).forEach(function (t) { h += "<p>" + esc(t) + "</p>"; }); return h; }
+
+function renderStoff(m) {
+  var h = "<div class='card'><p class='kicker'>Modul " + m.nr + " · Kernstoff</p><h1>" + esc(m.title) + "</h1><p class='lead'>" + esc(m.lead) + "</p>";
+  m.blocks.forEach(function (b) {
+    h += "<h2>" + esc(b.h) + "</h2>" + paras(b.p);
+    if (b.list) { h += "<ul class='txt'>"; b.list.forEach(function (li) { h += "<li>" + esc(li) + "</li>"; }); h += "</ul>"; }
+    h += paras(b.p2);
+  });
+  h += "<h2>Begriffe zum Aufklappen</h2>";
+  m.terms.forEach(function (t) { h += "<details><summary>" + esc(t[0]) + "</summary><div class='dd'>" + esc(t[1]) + "</div></details>"; });
+  return h + navRow() + "</div>";
+}
+
+function renderFragen(m) {
+  var st = modStats(m);
+  var h = "<div class='card'><p class='kicker'>Modul " + m.nr + " · Kontrollfragen</p><h1>" + esc(m.title) + "</h1>";
+  h += "<p class='lead'>Beantwortet: " + st.answered + " von " + st.total + " · richtig: " + st.right + "</p>";
+  m.questions.forEach(function (q, qi) {
+    var chosen = (q.id in state.answers) ? state.answers[q.id] : null;
+    h += "<div class='q'><div class='qn'>Frage " + (qi + 1) + " von " + m.questions.length + "</div><div class='qt'>" + esc(q.q) + "</div>";
+    q.order.forEach(function (orig, pos) {
+      var cls = "opt";
+      if (chosen !== null) { if (orig === q.c) cls += " correct"; else if (orig === chosen) cls += " wrong"; }
+      h += "<button type='button' class='" + cls + "' data-q='" + q.id + "' data-a='" + orig + "'" + (chosen !== null ? " disabled" : "") + "><span class='l'>" + LETTERS[pos] + "</span>" + esc(q.a[orig]) + "</button>";
+    });
+    if (chosen !== null) {
+      var ok = chosen === q.c;
+      h += "<div class='fb" + (ok ? "" : " no") + "'><b>" + (ok ? "Richtig." : "Nicht ganz. Richtig ist Antwort " + LETTERS[q.order.indexOf(q.c)] + ".") + "</b>" + esc(q.why) + "</div>";
+    }
+    h += "</div>";
+  });
+  return h + navRow() + "</div>";
+}
+
+function renderEnd() {
+  var t = totalStats();
+  var pct = t.answered ? Math.round((t.right / t.total) * 100) : 0;
+  var h = "<div class='card'><p class='kicker'>Abschluss</p><h1>Ihr Ergebnis</h1>";
+  h += "<div class='score'><div class='box'><div class='big'>" + t.right + " / " + t.total + "</div><div class='sm'>richtig beantwortet (" + pct + " %)</div></div><div class='box'><div class='big'>" + t.answered + " / " + t.total + "</div><div class='sm'>Fragen bearbeitet</div></div></div>";
+  h += "<div class='modlist'>";
+  DATA.modules.forEach(function (m) { var s = modStats(m); h += "<div><b>Modul " + m.nr + ": " + s.right + " / " + s.total + "</b>" + esc(m.title) + "</div>"; });
+  h += "</div>";
+  if (t.answered < t.total) h += "<p class='note'>Es sind noch " + (t.total - t.answered) + " Fragen offen. Über die Navigation gelangen Sie direkt zu den Kontrollfragen der einzelnen Module.</p>";
+  h += "<h2>Kernaussagen des Themenblocks</h2><ul class='txt'>";
+  DATA.kern.forEach(function (k) { h += "<li>" + esc(k) + "</li>"; });
+  h += "</ul>";
+  return h + navRow() + "</div>";
+}
+
+function render() {
+  var p = PAGES[state.page];
+  var main = document.getElementById("main");
+  var html;
+  if (p.key === "start") html = renderStart();
+  else if (p.key === "end") html = renderEnd();
+  else if (p.type === "stoff") html = renderStoff(p.mod);
+  else html = renderFragen(p.mod);
+  main.innerHTML = html;
+  document.getElementById("nav").innerHTML = renderNav();
+  var t = totalStats();
+  document.getElementById("pbar").style.width = Math.round((t.answered / t.total) * 100) + "%";
+  document.getElementById("hdrstat").textContent = "Fortschritt: " + t.answered + " von " + t.total + " Fragen";
+}
+
+function go(i) {
+  state.page = Math.max(0, Math.min(PAGES.length - 1, i));
+  save(); render();
+  try { window.scrollTo(0, 0); } catch (e) {}
+}
+
+function onClick(e) {
+  var el = e.target;
+  while (el && el !== document.body && !(el.getAttribute && (el.getAttribute("data-go") !== null || el.getAttribute("data-q") !== null))) el = el.parentNode;
+  if (!el || el === document.body || !el.getAttribute) return;
+  var g = el.getAttribute("data-go");
+  if (g !== null) { go(parseInt(g, 10)); return; }
+  var qid = el.getAttribute("data-q");
+  if (qid !== null && !(qid in state.answers)) {
+    state.answers[qid] = parseInt(el.getAttribute("data-a"), 10);
+    save();
+    var y = window.pageYOffset || 0;
+    render();
+    try { window.scrollTo(0, y); } catch (e2) {}
+  }
+}
+
+function reset() {
+  if (window.confirm && !window.confirm("Alle Antworten löschen und von vorne beginnen?")) return;
+  state = {page: 0, answers: {}};
+  try { window.localStorage.removeItem(STORE_KEY); } catch (e) {}
+  render();
+  try { window.scrollTo(0, 0); } catch (e) {}
+}
+
+load();
+document.addEventListener("click", onClick);
+document.getElementById("resetBtn").addEventListener("click", reset);
+window.addEventListener("resize", function () { document.getElementById("nav").innerHTML = renderNav(); });
+render();
+</script>
+</body>
+</html>
